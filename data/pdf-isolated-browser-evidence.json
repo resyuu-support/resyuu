@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "2026-07-20.result-context-nav-ui-evidence.1",
+  "build": "start-links-blue-underlined-ui-20260720",
+  "pdfRegressionEvidenceBaseBuild": "resilience-accessibility-20260719",
+  "testedAt": "2026-07-19",
+  "tests": {
+    "twoPageBusiness2024ThreeConsecutive": {
+      "status": "pass",
+      "runs": 3,
+      "courseCountEachRun": 79,
+      "completedToResultsEachRun": true
+    },
+    "twoPageBusiness2025ThreeConsecutive": {
+      "status": "pass",
+      "runs": 3,
+      "courseCountEachRun": 49,
+      "completedToResultsEachRun": true
+    },
+    "pageTwoArtificialStall": {
+      "status": "pass",
+      "elapsedMs": 15006,
+      "result": "partial_judgment",
+      "readPages": 1,
+      "totalPages": 2,
+      "failureCode": "PDF_PAGE_STALLED"
+    },
+    "business2025SeminarEligibility": {
+      "status": "pass",
+      "group1": "6.0/4",
+      "totalEarned": "42.5/40",
+      "overall": "履修条件を充足",
+      "graduationBlocking": false
+    },
+    "business2025SemesterWorkload": {
+      "status": "pass",
+      "creditsPerSemester": 14.5
+    },
+    "directStartup": {
+      "status": "pass",
+      "mainThreadPdfJsLoaded": false,
+      "customPwaScriptLoaded": false,
+      "consoleErrors": 0,
+      "scriptCount": 1,
+      "uploadStatusRole": "status",
+      "uploadStatusAriaLive": "polite",
+      "uploadStatusAriaAtomic": "true",
+      "initialAriaBusy": "false"
+    },
+    "manualHomeScreenGuide": {
+      "status": "pass",
+      "buttonCount": 1,
+      "dialogCount": 1,
+      "opensAsModal": true,
+      "closesNormally": true,
+      "mainThreadPdfJsLoaded": false,
+      "customPwaScriptLoaded": false,
+      "consoleErrors": 0
+    },
+    "business2025RegressionAfterGuide": {
+      "status": "pass",
+      "runs": 1,
+      "courseCount": 49,
+      "seminarGroup1": "6.0/4",
+      "seminarTotal": "42.5/40",
+      "creditsPerSemester": 14.5
+    },
+    "pageLimitPartialJudgment": {
+      "status": "pass",
+      "reportedPages": 2,
+      "readPages": 1,
+      "partial": true,
+      "failureCode": "PDF_PAGE_LIMIT",
+      "note": "A maxPages=1 harness verified the same protocol used when a transcript exceeds the five-page mobile limit."
+    },
+    "uploadBusyState": {
+      "status": "pass",
+      "disabledDuringProcessing": true,
+      "enabledAfterSuccess": true,
+      "ariaBusyAfterSuccess": "false",
+      "successCourseCount": 49
+    },
+    "invalidUploadRecovery": {
+      "status": "pass",
+      "disabledDuringProcessing": true,
+      "enabledAfterError": true,
+      "ariaBusyAfterError": "false",
+      "visibleMessage": "PDFファイルを選択してください。"
+    },
+    "pageTwoStallRegression20260719": {
+      "status": "pass",
+      "elapsedMs": 15007,
+      "result": "partial_judgment",
+      "readPages": 1,
+      "totalPages": 2,
+      "failureCode": "PDF_PAGE_STALLED"
+    },
+    "cohesiveSystemUiStaticAudit": {
+      "status": "pass",
+      "startJourneyPresentation": "on_demand_dialog",
+      "entryScreenDecorativeCards": 0,
+      "entryScreenDetailCopy": "hidden_until_requested",
+      "entryScreenVisibleCopy": ["履修サポート", "成績表PDFを選ぶ", "使い方", "プライバシー", "ホーム画面に追加"],
+      "privacyDisclosureSections": 5,
+      "deviceGuideSections": 5,
+      "postResultHomeScreenNudge": true,
+      "postResultValueMessage": "次回は、ホーム画面から",
+      "promotionAutoOpens": false,
+      "promotionDismissal": "memory_only",
+      "standaloneSuppression": true,
+      "visibleResultProfileContext": true,
+      "sharedBodyAndNumberFontStack": true,
+      "fontWeightScale": [400, 500, 600],
+      "controlRadiusPx": 8,
+      "panelRadiusPx": 12,
+      "nestedListRows": "flat_dividers",
+      "graduationRequirementStatusSurface": "full_row_tint_green_amber_red",
+      "statusRecognitionUsesColorAndText": true,
+      "resultModeNavigation": "selected_section_minimum_distance",
+      "resultModePageTopJumpRemoved": true,
+      "resultModeAriaControlsMapped": true,
+      "profileControlsDefault": "collapsed",
+      "primaryResultOrder": ["earned_credits", "remaining_credits", "gpa", "per_semester_target"],
+      "largeMetricNumberStyle": "shared_system_font_with_tabular_numbers_and_separate_units",
+      "workloadCalculationConditions": "visible",
+      "creditTotals": "visible",
+      "gpa": "visible",
+      "courseDefaultVisibleColumns": 5,
+      "supportedRangeAvailableOnDemand": true,
+      "quotedRequirementPromptRemoved": true,
+      "resultConfidenceLink": true,
+      "determinateUploadProgress": true,
+      "responsiveStylesPresent": true,
+      "duplicateHtmlIds": 0,
+      "visualBrowserQa": "not_run"
+    }
+  },
+  "physicalDevice": {
+    "safariPrivateBrowsing": {
+      "status": "pass_reported_by_project_owner",
+      "verifiedBuild": "safari-private-isolated-partial-20260716",
+      "note": "The result-context navigation UI keeps full-row graduation-state tinting and replaces the summary jump with nearest selected-content reveal, retaining the verified PDF path unchanged."
+    }
+  },
+  "privacy": {
+    "testPdfCopiedIntoFinalPublicRoot": false,
+    "studentNameRecorded": false,
+    "studentIdRecorded": false,
+    "courseNamesRecorded": false
+  },
+  "limitation": "The result-context navigation UI preserves the PDF path verified on resilience-accessibility-20260719 and passed static release checks. A final interaction check in Safari Private Browsing and the Instagram in-app browser is recommended after upload."
+}

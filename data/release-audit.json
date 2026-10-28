@@ -1,0 +1,386 @@
+{
+  "schemaVersion": "2026-07-20.start-links-blue-underlined-ui-release-audit.1",
+  "generatedAt": "2026-07-20T08:00:56.647Z",
+  "build": "start-links-blue-underlined-ui-20260720",
+  "status": "READY_FOR_UPLOAD",
+  "checksPassed": 69,
+  "checksTotal": 69,
+  "checks": [
+    {
+      "id": "BUILD-001",
+      "status": "pass",
+      "evidence": "build id is consistent across app, HTML, retired SW, and both rule files"
+    },
+    {
+      "id": "PDF-001",
+      "status": "pass",
+      "evidence": "PDF.js is absent from the main page and loads only inside the isolated worker"
+    },
+    {
+      "id": "PDF-002",
+      "status": "pass",
+      "evidence": "the main page starts one dedicated extraction worker"
+    },
+    {
+      "id": "PDF-003",
+      "status": "pass",
+      "evidence": "page stall and hard stop timers are present on the responsive main page"
+    },
+    {
+      "id": "PDF-003B",
+      "status": "pass",
+      "evidence": "file reading uses FileReader and has a visible 20-second deadline"
+    },
+    {
+      "id": "PDF-003C",
+      "status": "pass",
+      "evidence": "FileReader success returns the original PDF header bytes"
+    },
+    {
+      "id": "PDF-003D",
+      "status": "pass",
+      "evidence": "a stalled FileReader rejects at the configured deadline"
+    },
+    {
+      "id": "PDF-004",
+      "status": "pass",
+      "evidence": "a completed page is returned as an explicit partial judgment after a later-page stall"
+    },
+    {
+      "id": "PDF-005",
+      "status": "pass",
+      "evidence": "PDF.js and its handler run together inside the outer worker without a nested worker"
+    },
+    {
+      "id": "PDF-006",
+      "status": "pass",
+      "evidence": "PDF.js binaries retain the fixed known hashes"
+    },
+    {
+      "id": "PDF-007",
+      "status": "pass",
+      "evidence": "PDFs above the mobile page limit continue as an explicit partial judgment"
+    },
+    {
+      "id": "MEM-001",
+      "status": "pass",
+      "evidence": "rules load only after isolated PDF extraction finishes"
+    },
+    {
+      "id": "MEM-002",
+      "status": "pass",
+      "evidence": "runtime rules are 778129 bytes"
+    },
+    {
+      "id": "MEM-003",
+      "status": "pass",
+      "evidence": "audit-only matrices are excluded from runtime memory"
+    },
+    {
+      "id": "RULE-faculties",
+      "status": "pass",
+      "evidence": "faculties is identical to the audited full rules"
+    },
+    {
+      "id": "RULE-finalP0Rules",
+      "status": "pass",
+      "evidence": "finalP0Rules is identical to the audited full rules"
+    },
+    {
+      "id": "RULE-courseIdentityMaster",
+      "status": "pass",
+      "evidence": "courseIdentityMaster is identical to the audited full rules"
+    },
+    {
+      "id": "RULE-releaseSupportVariants",
+      "status": "pass",
+      "evidence": "releaseSupportVariants is identical to the audited full rules"
+    },
+    {
+      "id": "RULE-profileAvailabilityMatrix",
+      "status": "pass",
+      "evidence": "profileAvailabilityMatrix is identical to the audited full rules"
+    },
+    {
+      "id": "RULE-semesterWorkloadMaster",
+      "status": "pass",
+      "evidence": "semesterWorkloadMaster is identical to the audited full rules"
+    },
+    {
+      "id": "PWA-001",
+      "status": "pass",
+      "evidence": "the custom PWA entry flow and service-worker registration are absent from startup"
+    },
+    {
+      "id": "PWA-002",
+      "status": "pass",
+      "evidence": "old registrations and caches are retired"
+    },
+    {
+      "id": "GUIDE-001",
+      "status": "pass",
+      "evidence": "the start-screen label and guide title consistently say Add to Home Screen"
+    },
+    {
+      "id": "GUIDE-002",
+      "status": "pass",
+      "evidence": "both entry and post-result actions open the same on-demand guide"
+    },
+    {
+      "id": "GUIDE-003",
+      "status": "pass",
+      "evidence": "the guide adds no install prompt, DOM observer, or background lifecycle work"
+    },
+    {
+      "id": "GUIDE-004",
+      "status": "pass",
+      "evidence": "the on-demand device guide covers mobile, desktop, in-app browsers, and a universal fallback"
+    },
+    {
+      "id": "GUIDE-005",
+      "status": "pass",
+      "evidence": "a dismissible value-led promotion appears after the useful result and outside the core upload journey"
+    },
+    {
+      "id": "GUIDE-006",
+      "status": "pass",
+      "evidence": "the result promotion is suppressed after dismissal, outside the dashboard, and in standalone display mode"
+    },
+    {
+      "id": "A11Y-001",
+      "status": "pass",
+      "evidence": "PDF progress is exposed as an assistive-technology status message"
+    },
+    {
+      "id": "A11Y-002",
+      "status": "pass",
+      "evidence": "the upload region exposes busy state and prevents duplicate file selection"
+    },
+    {
+      "id": "UI-001",
+      "status": "pass",
+      "evidence": "the entry screen stays focused on identity, upload, progress, on-demand help, and two useful university shortcuts"
+    },
+    {
+      "id": "UI-002",
+      "status": "pass",
+      "evidence": "the removed quoted requirement prompt is absent from markup and runtime code"
+    },
+    {
+      "id": "UI-003",
+      "status": "pass",
+      "evidence": "primary navigation labels describe their destination without duplicate wording"
+    },
+    {
+      "id": "UI-004",
+      "status": "pass",
+      "evidence": "PDF processing has a determinate visual progress path alongside text status"
+    },
+    {
+      "id": "UI-005",
+      "status": "pass",
+      "evidence": "the entry and unified academic summary have responsive styles"
+    },
+    {
+      "id": "UI-006",
+      "status": "pass",
+      "evidence": "detailed usage guidance opens only when requested"
+    },
+    {
+      "id": "UI-007",
+      "status": "pass",
+      "evidence": "results read earned credits, remaining credits, GPA, and per-semester target in that order with calculations visible"
+    },
+    {
+      "id": "UI-008",
+      "status": "pass",
+      "evidence": "course technical columns are available on demand instead of crowding the default table"
+    },
+    {
+      "id": "UI-009",
+      "status": "pass",
+      "evidence": "redundant or ambiguous result labels are absent"
+    },
+    {
+      "id": "UI-010",
+      "status": "pass",
+      "evidence": "the primary metrics explicitly distinguish earned, remaining, and per-semester values"
+    },
+    {
+      "id": "UI-011",
+      "status": "pass",
+      "evidence": "large academic values use a restrained number-focused font stack with separate unit labels"
+    },
+    {
+      "id": "UI-012",
+      "status": "pass",
+      "evidence": "the result identifies the assessed faculty and entrance year in visible, natural Japanese"
+    },
+    {
+      "id": "UI-013",
+      "status": "pass",
+      "evidence": "body text, metrics, controls, and panels share one compact design-token system"
+    },
+    {
+      "id": "UI-014",
+      "status": "pass",
+      "evidence": "the interface uses a restrained 400/500/600 weight hierarchy without competing heavy weights"
+    },
+    {
+      "id": "UI-015",
+      "status": "pass",
+      "evidence": "graduation requirement rows restore full-surface green, amber, and red status recognition within the shared design system"
+    },
+    {
+      "id": "UI-016",
+      "status": "pass",
+      "evidence": "the start screen keeps official BEEF+ and Uribo-Net links below the help controls while matching their text styling and safe external-link behavior"
+    },
+    {
+      "id": "UI-017",
+      "status": "pass",
+      "evidence": "the on-demand guide documents the official transcript PDF path, provides the official manual, and includes an iPhone save instruction before upload"
+    },
+    {
+      "id": "UI-018",
+      "status": "pass",
+      "evidence": "all five start-screen help and university actions are visibly blue and underlined at rest"
+    },
+    {
+      "id": "NAV-001",
+      "status": "pass",
+      "evidence": "result-mode changes reveal only the selected content using minimum-distance scrolling"
+    },
+    {
+      "id": "NAV-002",
+      "status": "pass",
+      "evidence": "result-mode tabs no longer jump to the page summary and identify their controlled content"
+    },
+    {
+      "id": "PRIVACY-001",
+      "status": "pass",
+      "evidence": "privacy guidance explains processing, storage, network traffic, reporting, and official status"
+    },
+    {
+      "id": "PRIVACY-002",
+      "status": "pass",
+      "evidence": "privacy guidance remains available after the start screen is replaced by results"
+    },
+    {
+      "id": "PRIVACY-003",
+      "status": "pass",
+      "evidence": "a layered summary states the three core facts and the policy revision date before the detailed notice"
+    },
+    {
+      "id": "PRIVACY-004",
+      "status": "pass",
+      "evidence": "the detailed notice covers purpose, local processing, retention, hosting traffic, device access, reporting, links, automated judgment, scope, revisions, and contact"
+    },
+    {
+      "id": "PRIVACY-005",
+      "status": "pass",
+      "evidence": "hosting request metadata is distinguished from transcript data and external-link behavior is explicit"
+    },
+    {
+      "id": "PRIVACY-006",
+      "status": "pass",
+      "evidence": "the application contains no analytics, advertising beacon, cookie setter, or persistent browser-data write"
+    },
+    {
+      "id": "PRIVACY-007",
+      "status": "pass",
+      "evidence": "the selected PDF moves only from FileReader to the local extraction worker while network connections are restricted to the same origin"
+    },
+    {
+      "id": "PRIVACY-008",
+      "status": "pass",
+      "evidence": "reporting is an explicit clipboard write and user-opened external action whose generated text excludes transcript identity and course information"
+    },
+    {
+      "id": "HTML-001",
+      "status": "pass",
+      "evidence": "all HTML ids are unique"
+    },
+    {
+      "id": "CONTINUITY-001",
+      "status": "pass",
+      "evidence": "internal fixture variance warns and continues instead of blocking judgment"
+    },
+    {
+      "id": "CONTINUITY-002",
+      "status": "pass",
+      "evidence": "ledger mismatches block only when a rule explicitly opts into blocking"
+    },
+    {
+      "id": "SEMINAR-001",
+      "status": "pass",
+      "evidence": "seminar eligibility remains numeric and advisory-only"
+    },
+    {
+      "id": "BROWSER-001",
+      "status": "pass",
+      "evidence": "both two-page real PDFs complete three consecutive runs"
+    },
+    {
+      "id": "BROWSER-002",
+      "status": "pass",
+      "evidence": "page-two stall returns a partial judgment at the bounded timeout"
+    },
+    {
+      "id": "BROWSER-003",
+      "status": "pass",
+      "evidence": "2025 seminar rows and normal-workload estimate render after PDF parsing"
+    },
+    {
+      "id": "BROWSER-004",
+      "status": "pass",
+      "evidence": "the manual guide opens and closes while the unchanged 2025 PDF path still completes"
+    },
+    {
+      "id": "BROWSER-005",
+      "status": "pass",
+      "evidence": "the page-limit protocol returns an explicit partial judgment"
+    },
+    {
+      "id": "BROWSER-006",
+      "status": "pass",
+      "evidence": "PDF selection is restored after both success and error"
+    },
+    {
+      "id": "BROWSER-007",
+      "status": "pass",
+      "evidence": "the existing 15-second stall fallback remains bounded"
+    }
+  ],
+  "assetHashes": {
+    "index.html": "sha256:4dc2bec4e7d0a44ea545f8ffb0aadf341e90d4783ca67286977562c2196d60ee",
+    "app.js": "sha256:062830375426bff4cd980d5453af20c548a344a56ba6311fdbf2d21f5701fca5",
+    "style.css": "sha256:3eccab35477a58a5f25fa678c6a3e08b937e9bb8c911eacc7c83753f68b89155",
+    "pdf-extract.worker.js": "sha256:4dcfa3db0b36ca9fbd262be64bd0ee56fda1980c57e2278512a8b5d3c7344b7d",
+    "sw.js": "sha256:f30f7c0952ffbc30b605e594cedc11f7ac93a02a54c84bd7c5b03856d4d8a0fe",
+    "data/runtime-rules.json": "sha256:965a41c32cadcce5d59069b83154b7d4a35a8f638f143d7322e31f271f20fd4c",
+    "data/rules.json": "sha256:db060d5a9bd1b6305442aff936e8ed8807c88b3a955e797e776cc4205f9b42ba",
+    "data/pdf-isolated-browser-evidence.json": "sha256:d2e493e5bac266db92076ba0dad8ca57028a8cef55cb1b7cd3cfb5025a0b2f7e",
+    "vendor/pdf.min.js": "sha256:5b5799e6f8c680663207ac5b42ee14eed2a406fa7af48f50c154f0c0b1566946",
+    "vendor/pdf.worker.min.js": "sha256:feabdf309770ed24bba31a5467836cdc8cf639c705af27d52b585b041bb8527b"
+  },
+  "physicalDeviceEvidence": {
+    "safariPrivateBrowsingPdfPath": "pass_reported_by_project_owner_on_pre-guide_build",
+    "postUploadGuideAppearanceCheck": "recommended",
+    "instagramInAppBrowserCheck": "recommended"
+  },
+  "privacyEvidence": {
+    "layeredSummary": true,
+    "detailedSections": 9,
+    "lastUpdated": "2026-07-20",
+    "selectedPdfNetworkUpload": false,
+    "transcriptPersistentStorage": false,
+    "cookiesSetByApplication": false,
+    "analyticsAdvertisingTags": 0,
+    "externalSocialEmbeds": 0,
+    "clipboardRead": false,
+    "hostingRequestMetadataDisclosure": true,
+    "automatedJudgmentDisclosure": true,
+    "codeAlignmentAudit": "pass"
+  }
+}

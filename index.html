@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="description" content="神戸大学の対応学部・年度向け非公式履修サポート。成績表PDFを端末内で解析し、公式資料の確認が完了したプロフィールだけ卒業要件を判定します。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#f6f7f8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="履修サポート">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>履修サポート | 神戸大学・対応年度限定</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/resyuu-icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css?v=start-links-blue-underlined-ui-20260720">
+</head>
+<body>
+  <header id="topbar" class="topbar loaded-only" inert aria-hidden="true">
+    <div class="brand" aria-label="履修サポート">
+      <img class="brand-icon" src="./icons/resyuu-icon-192.png" alt="">
+      <div>
+        <strong role="heading" aria-level="1">履修サポート</strong>
+      </div>
+    </div>
+    <details id="profileControls" class="profile-controls">
+      <summary>
+        <span>
+          <strong id="profileSummary">経営学部 / 2024年度</strong>
+          <small id="profileSource" class="visually-hidden">PDF読込後に自動判定</small>
+        </span>
+        <span class="profile-chevron" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="actions">
+        <select id="facultySelect" aria-label="学部">
+          <option value="business" selected>経営学部</option>
+          <option value="economics">経済学部</option>
+          <option value="law">法学部</option>
+          <option value="internationalHumanSciences">国際人間科学部</option>
+          <option value="literature">文学部</option>
+        </select>
+        <select id="departmentSelect" aria-label="学科" hidden>
+          <option value="">学科を選択</option>
+          <option value="globalCulture">グローバル文化学科</option>
+          <option value="humanDevelopment">発達コミュニティ学科</option>
+          <option value="environment">環境共生学科</option>
+          <option value="childEducation">子ども教育学科</option>
+        </select>
+        <select id="ihsGspRouteSelect" aria-label="GSP・高度教養ルート" hidden>
+          <option value="gsp">GSP履修ルート</option>
+          <option value="advanced">GSP未履修・高度教養ルート</option>
+        </select>
+        <select id="lawCourseSelect" aria-label="法学部履修コース" hidden>
+          <option value="">履修コースを選択</option>
+          <option value="justice">司法コース</option>
+          <option value="corporate">企業・行政コース</option>
+          <option value="politics">政治・国際コース</option>
+        </select>
+        <select id="literatureMajorSelect" aria-label="文学部専修" hidden>
+          <option value="">専修を選択</option>
+        </select>
+        <select id="yearSelect" aria-label="入学年度">
+          <option value="2021">2021年度入学</option>
+          <option value="2022">2022年度入学</option>
+          <option value="2023">2023年度入学</option>
+          <option value="2024" selected>2024年度入学</option>
+          <option value="2025">2025年度入学</option>
+          <option value="2026">2026年度入学</option>
+        </select>
+        <div class="top-upload-actions">
+          <label class="secondary upload-label" for="pdfInput">成績表PDF</label>
+        </div>
+      </div>
+    </details>
+  </header>
+  <input id="pdfInput" class="visually-hidden" type="file" accept="application/pdf,.pdf" aria-label="成績表PDF">
+
+  <main class="layout">
+    <section id="startScreen" class="status-panel start-screen" aria-labelledby="startTitle" aria-busy="false">
+      <div class="start-brand">
+        <img class="start-icon" src="./icons/resyuu-icon-192.png" alt="">
+        <h1 id="startTitle">履修サポート</h1>
+      </div>
+      <div hidden aria-hidden="true">
+        <span id="studentName"></span>
+        <span id="studentMeta"></span>
+        <span id="modeBadge"></span>
+        <span id="ruleBadge"></span>
+      </div>
+      <div class="start-action-panel">
+        <div class="upload-hero-actions">
+          <label class="primary upload-label" for="pdfInput">成績表PDFを選ぶ</label>
+        </div>
+        <div id="uploadProgressContainer" class="upload-progress-container" hidden>
+          <div id="uploadProgress" class="upload-progress" role="progressbar" aria-label="PDF判定の進行状況" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="uploadProgressBar"></span>
+          </div>
+          <div class="upload-progress-labels" aria-hidden="true"><span>読み取り</span><span>判定</span><span>結果</span></div>
+        </div>
+        <div class="start-secondary-actions">
+          <button id="howToButton" class="start-text-button" type="button">使い方</button>
+          <button id="privacyButton" class="start-text-button" type="button">プライバシー</button>
+          <button id="homeScreenGuideButton" class="start-text-button" type="button">ホーム画面に追加</button>
+        </div>
+        <nav class="start-university-links" aria-label="神戸大学のサービス">
+          <a class="start-text-link" href="https://beefplus.center.kobe-u.ac.jp/" target="_blank" rel="noopener noreferrer">BEEF+</a>
+          <a class="start-text-link" href="https://kym22-web.ofc.kobe-u.ac.jp/campusweb/" target="_blank" rel="noopener noreferrer">うりぼーネット</a>
+        </nav>
+        <p id="uploadStatus" class="message" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+        <p id="browserHint" class="browser-hint" hidden></p>
+        <details id="pdfDiagnosticDetails" class="pdf-diagnostic-details" hidden>
+          <summary>読み取り診断情報</summary>
+          <code id="pdfDiagnosticCode"></code>
+          <button id="copyPdfDiagnosticButton" class="ghost" type="button">診断情報をコピー</button>
+          <span id="pdfDiagnosticCopyStatus" class="muted" aria-live="polite"></span>
+        </details>
+      </div>
+    </section>
+
+    <section id="profileStopPanel" class="profile-stop-panel loaded-only" aria-labelledby="profileStopTitle" hidden>
+      <h1 id="profileStopTitle">このプロフィールは現在判定できません</h1>
+      <p id="profileStopMessage"></p>
+      <p id="profileSupportRange" class="profile-support-range"></p>
+      <button id="profileStopReportButton" class="secondary" type="button" hidden>判定ミスを報告する</button>
+      <label class="secondary upload-label" for="pdfInput">別の成績表PDFを選択</label>
+    </section>
+
+    <nav id="viewTabs" class="view-tabs requires-data" aria-label="診断画面">
+      <button type="button" data-view="dashboard" aria-selected="true">概要</button>
+      <button type="button" data-view="requirements" aria-selected="false">要件詳細</button>
+      <button type="button" data-view="courses" aria-selected="false">科目一覧</button>
+    </nav>
+
+    <section id="graduationPositionSection" class="credit-overview requires-data" data-page="dashboard" aria-labelledby="graduationPositionTitle">
+      <p id="resultProfileLine" class="result-profile-line"></p>
+      <section class="earned-summary" aria-labelledby="earnedSummaryTitle">
+        <p id="earnedSummaryTitle" class="summary-section-label">修得単位</p>
+        <div class="earned-primary-value"><strong id="transcriptEarnedCredits" class="earned-primary">--</strong><span>単位</span></div>
+        <p id="excludedCreditsRow" class="excluded-credit-note">卒業要件に使われない単位 <strong id="excludedCredits">--単位</strong></p>
+      </section>
+      <p id="graduationPositionTitle" class="credit-overview-label">卒業まであと</p>
+      <div id="graduationRemainingValue" class="credit-primary"><strong id="graduationRemainingCredits">--</strong><span id="graduationRemainingUnit">単位</span></div>
+      <div class="credit-counted">
+        <strong id="graduationCountedCredits">-- / --単位</strong>
+      </div>
+      <div id="graduationProgress" class="degree-progress" role="progressbar" aria-label="卒業要件の単位進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span id="graduationProgressBar"></span>
+      </div>
+      <button id="gpaAuxiliary" class="summary-metric-row gpa-auxiliary" type="button" data-jump="gpa">
+        <span class="summary-metric-label">GPA</span>
+        <strong id="gpaValue">--</strong>
+        <span class="summary-metric-chevron" aria-hidden="true">›</span>
+      </button>
+      <section id="semesterWorkloadSection" class="semester-workload" aria-labelledby="semesterWorkloadTitle" hidden>
+        <div class="semester-workload-heading">
+          <p id="semesterWorkloadTitle">卒業までに必要な単位の目安</p>
+          <div><strong id="semesterWorkloadValue">--</strong><span>単位 / 1学期</span></div>
+        </div>
+        <p id="semesterWorkloadDisclosure" class="semester-workload-disclosure">目安は表示していません</p>
+        <p id="semesterWorkloadBreakdown" class="semester-workload-breakdown" aria-live="polite"></p>
+        <div class="semester-workload-controls">
+          <label class="semester-count-control" for="semesterWorkloadRemainingSemesters">
+            <span>残り学期</span>
+            <input id="semesterWorkloadRemainingSemesters" type="number" min="1" max="12" step="1" inputmode="numeric" aria-describedby="semesterWorkloadStatus">
+          </label>
+          <label id="semesterWorkloadToggleRow" class="switch-control">
+            <input id="semesterWorkloadToggle" type="checkbox" role="switch" checked>
+            <span>ゼミ・卒論等を見込む</span>
+          </label>
+        </div>
+        <p id="semesterWorkloadStatus" class="semester-workload-status"></p>
+      </section>
+      <div class="result-status-row">
+        <button class="result-evidence-link" type="button" data-jump="evidence"><span id="resultConfidenceBadge" class="badge neutral">確認中</span><span>根拠を見る</span></button>
+      </div>
+    </section>
+
+    <aside id="homeScreenNudge" class="home-screen-nudge requires-data" data-page="dashboard" aria-labelledby="homeScreenNudgeTitle" hidden>
+      <div class="home-screen-nudge-copy">
+        <strong id="homeScreenNudgeTitle">次回は、ホーム画面から</strong>
+        <p>ブラウザを探さず、履修サポートを開けます。</p>
+      </div>
+      <div class="home-screen-nudge-actions">
+        <button id="resultHomeScreenGuideButton" class="home-screen-nudge-primary" type="button">ホーム画面に追加</button>
+        <button id="dismissHomeScreenNudgeButton" class="home-screen-nudge-dismiss" type="button">今はしない</button>
+      </div>
+    </aside>
+
+    <nav id="resultModeTabs" class="result-mode-tabs requires-data" data-page="dashboard" aria-label="判定内容の切替">
+      <button type="button" data-result-view="graduation" aria-controls="graduationGroupsSection" aria-selected="true">卒業</button>
+      <button id="teachingResultTab" type="button" data-result-view="teaching" aria-controls="teachingSection" aria-selected="false">教職</button>
+      <button id="programResultTab" type="button" data-result-view="programs" aria-controls="specialProgramSection" aria-selected="false">資格・プログラム</button>
+    </nav>
+
+    <section id="graduationGroupsSection" class="requirement-breakdown requires-data" data-page="dashboard" data-result-section="graduation" aria-labelledby="graduationGroupsTitle">
+      <div class="breakdown-heading">
+        <h2 id="graduationGroupsTitle">卒業要件の内訳</h2>
+      </div>
+      <div id="graduationGroupList" class="graduation-group-grid empty">成績表PDFを読み込むと表示します。</div>
+      <button id="failureOverviewEntry" class="failure-overview-entry" type="button" data-jump="failedHistory" hidden>
+        <span><strong>再履修候補 <b id="failureOverviewCandidateCount">0件</b></strong><strong>不合格履歴 <b id="failureOverviewOtherCount">0件</b></strong></span>
+        <span class="failure-overview-link">不合格履歴と再履修候補を見る <span aria-hidden="true">›</span></span>
+      </button>
+    </section>
+
+    <section id="readingNoticeSection" class="panel reading-notice-panel requires-data" data-page="dashboard" data-result-section="graduation" aria-labelledby="readingNoticeTitle" hidden>
+      <div class="panel-head">
+        <h2 id="readingNoticeTitle">読み取り上の注意</h2>
+        <span id="readingNoticeCount" class="badge warn">0件</span>
+      </div>
+      <div id="readingNoticeList" class="compact-list"></div>
+    </section>
+
+    <section id="teachingSection" class="teaching-panel requires-data" data-page="dashboard" data-result-section="teaching" aria-labelledby="teachingTitle" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 id="teachingTitle">教職</h2>
+        </div>
+      </div>
+      <p id="teachingProfileSummary" class="profile-prefill"></p>
+      <p id="teachingStatus" class="muted">校種・教科を選択してから判定します。</p>
+      <div id="teachingControls" class="teaching-controls">
+        <select id="teachingSchoolSelect" aria-label="教員免許の校種">
+          <option value="">校種を選択</option>
+        </select>
+        <select id="teachingSubjectSelect" aria-label="教員免許の教科">
+          <option value="">教科を選択</option>
+        </select>
+        <button id="teachingRunButton" class="primary" type="button">判定を開始</button>
+      </div>
+      <div id="teachingResults" class="compact-list empty" hidden>校種・教科を選択してください。</div>
+    </section>
+
+    <section class="columns requires-data" data-page="requirements">
+      <div class="stack">
+        <section id="liberalSection" class="panel" aria-labelledby="liberalTitle">
+          <div class="panel-head">
+            <h2 id="liberalTitle">教養科目</h2>
+            <span id="liberalRule" class="badge neutral">年度別</span>
+          </div>
+          <div id="liberalList" class="list empty">データがありません。</div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section id="requirementsSection" class="panel" aria-labelledby="requirementsTitle">
+          <div class="panel-head">
+            <h2 id="requirementsTitle">卒業要件</h2>
+          </div>
+          <div id="requirements" class="requirements empty">データがありません。</div>
+        </section>
+      </div>
+    </section>
+
+    <section id="failedHistorySection" class="panel requires-data page-panel" data-page="courses" aria-labelledby="failedHistoryTitle">
+      <div class="panel-head">
+        <h2 id="failedHistoryTitle">不合格履歴</h2>
+        <span id="failedHistoryCount" class="badge neutral">0件</span>
+      </div>
+      <section id="retakeCandidateSection" class="retake-candidates" aria-labelledby="retakeCandidateTitle">
+        <div class="subsection-head">
+          <h3 id="retakeCandidateTitle">再履修候補</h3>
+          <span id="retakeCandidateCount" class="badge neutral">0件</span>
+        </div>
+        <div id="retakeCandidateList" class="list empty">再履修候補はありません。</div>
+      </section>
+      <details id="failedHistoryDetails">
+        <summary>不合格履歴をすべて見る</summary>
+        <div id="failedHistoryList" class="list empty">不合格履歴はありません。</div>
+      </details>
+    </section>
+
+    <section id="courseSection" class="panel requires-data page-panel" data-page="courses" aria-labelledby="courseTitle">
+      <div class="panel-head">
+        <h2 id="courseTitle">科目一覧</h2>
+        <div class="panel-head-actions">
+          <button id="courseColumnsButton" class="ghost" type="button" aria-pressed="false">詳細列</button>
+          <button id="exportButton" class="ghost" type="button">CSV</button>
+        </div>
+      </div>
+      <div class="course-sort-controls">
+        <label for="courseSortSelect">並び順</label>
+        <select id="courseSortSelect">
+          <option value="year">履修年度順</option>
+          <option value="grade">成績順</option>
+          <option value="category">成績表区分順</option>
+          <option value="group">群順</option>
+        </select>
+        <button id="courseSortDirection" class="icon-button" type="button" aria-label="古い順に切り替える" title="古い順に切り替える">↓</button>
+        <span id="courseSortStatus" class="visually-hidden">履修年度（新しい順）</span>
+      </div>
+      <div class="filters">
+        <input id="searchInput" type="search" placeholder="科目名・担当で検索" autocomplete="off">
+        <select id="statusFilter" aria-label="状態">
+          <option value="all">状態すべて</option>
+          <option value="earned">修得</option>
+          <option value="failed">不可</option>
+          <option value="cancelled">取消</option>
+          <option value="remote">遠隔</option>
+          <option value="gpa">GPA対象</option>
+          <option value="excluded">GPA対象外</option>
+        </select>
+        <select id="categoryFilter" aria-label="区分">
+          <option value="all">区分すべて</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>状態</th>
+              <th>科目名</th>
+              <th>単位</th>
+              <th>成績</th>
+              <th>GP</th>
+              <th>年度</th>
+              <th>成績表区分</th>
+              <th>判定用途</th>
+              <th>群</th>
+              <th>担当</th>
+            </tr>
+          </thead>
+          <tbody id="courseTable">
+            <tr><td colspan="10" class="table-empty">成績表を読み込んでください。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="specialProgramSection" class="special-program-panel requires-data" data-page="dashboard" data-result-section="programs" aria-labelledby="specialProgramTitle">
+      <div class="panel-head">
+        <h2 id="specialProgramTitle">資格・プログラム</h2>
+        <span id="specialProgramBadge" class="badge neutral">別確認</span>
+      </div>
+      <div class="filters">
+        <select id="specialProgramSelect" aria-label="特殊プログラム">
+          <option value="">利用するプログラムを選択</option>
+        </select>
+      </div>
+      <div id="specialProgramList" class="list empty">この学部で表示できる特殊プログラム情報はまだありません。</div>
+    </section>
+
+    <section id="evidenceSection" class="panel evidence-panel requires-data page-panel" data-page="requirements" aria-labelledby="evidenceTitle">
+      <div class="panel-head">
+        <h2 id="evidenceTitle">判定根拠</h2>
+      </div>
+      <details id="evidenceDetails" class="evidence-details">
+        <summary>判定根拠を見る</summary>
+        <div id="evidenceList" class="compact-list empty">年度別の便覧ルールをもとに表示します。</div>
+      </details>
+      <div class="official-sources">
+        <h3>公式確認リスト</h3>
+        <div id="officialSourceList" class="compact-list empty">学生便覧・履修関連ページを確認してください。</div>
+      </div>
+      <div class="evidence-actions">
+        <button id="reportIssueButton" class="ghost" type="button">判定ミスを報告する</button>
+        <span id="reportStatus" class="muted">氏名・学籍番号・PDF本体を含めない報告文を作成できます。</span>
+      </div>
+      <textarea id="issueReportPreview" class="issue-report-preview" readonly hidden aria-label="報告用テキスト"></textarea>
+    </section>
+
+    <footer class="support-footer loaded-only">
+      <button id="footerPrivacyButton" type="button">プライバシー</button>
+      <a href="https://www.instagram.com/uri_support/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    </footer>
+  </main>
+
+  <dialog id="howToDialog" class="privacy-dialog" aria-labelledby="howToDialogTitle">
+    <form method="dialog">
+      <div class="dialog-head">
+        <h2 id="howToDialogTitle">使い方</h2>
+        <button class="icon-button" value="cancel" aria-label="閉じる" title="閉じる">×</button>
+      </div>
+      <div class="privacy-dialog-content">
+        <section class="how-to-group">
+          <div class="how-to-group-head">
+            <h3>成績表PDFを保存する</h3>
+            <a href="https://kym22-web.ofc.kobe-u.ac.jp/campusweb/" target="_blank" rel="noopener noreferrer">うりぼーネットを開く</a>
+          </div>
+          <ol class="how-to-steps">
+            <li><span>1</span><div><strong>うりぼーネットにログイン</strong><p>神戸大学のアカウントでログインします。</p></div></li>
+            <li><span>2</span><div><strong>単位修得状況照会を開く</strong><p>「成績」から「単位修得状況照会」を選びます。</p></div></li>
+            <li><span>3</span><div><strong>学業成績表を出力</strong><p>表示範囲を指定し、「学業成績表出力」を押します。</p></div></li>
+            <li><span>4</span><div><strong>PDFを端末に保存</strong><p>表示された学業成績表をPDFで保存します。iPhoneは共有メニューから「ファイルに保存」を選べます。</p></div></li>
+          </ol>
+          <p class="how-to-source-note">ブラウザにより保存時の表示が異なります。詳しくは<a href="https://www.uriboportal.ofc.kobe-u.ac.jp/wp-content/uploads/2024/04/uribonet_tebikiJa.pdf#page=34" target="_blank" rel="noopener noreferrer">神戸大学公式の利用手引き</a>をご確認ください。</p>
+        </section>
+        <section class="how-to-group">
+          <h3>履修サポートで確認する</h3>
+          <ol class="how-to-steps">
+            <li><span>5</span><div><strong>成績表PDFを選ぶ</strong><p>保存した学業成績表PDFを選択すると、端末内で自動判定します。</p></div></li>
+            <li><span>6</span><div><strong>結果を確認する</strong><p>修得単位、卒業までの不足、1学期あたりの目安、判定根拠を確認できます。</p></div></li>
+          </ol>
+        </section>
+        <p class="dialog-note">経営学部・経済学部・法学部・国際人間科学部・文学部の2021–2026年度に対応しています。資料の接続状況により暫定判定になる場合があります。</p>
+      </div>
+      <div class="dialog-actions">
+        <button class="primary" value="cancel">閉じる</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="homeScreenGuideDialog" class="privacy-dialog" aria-labelledby="homeScreenGuideDialogTitle">
+    <form method="dialog">
+      <div class="dialog-head">
+        <h2 id="homeScreenGuideDialogTitle">ホーム画面に追加</h2>
+        <button class="icon-button" value="cancel" aria-label="閉じる" title="閉じる">×</button>
+      </div>
+      <div class="privacy-dialog-content">
+        <p>使っている端末の項目を開いてください。端末やブラウザの版により、項目名が少し異なる場合があります。</p>
+        <div class="platform-guide">
+          <details>
+            <summary>iPhone・iPad</summary>
+            <p>Safariで開き、共有（または「その他」から共有）をタップし、「ホーム画面に追加」を選びます。表示された場合は「Webアプリとして開く」をオンにして「追加」をタップします。</p>
+          </details>
+          <details>
+            <summary>Android</summary>
+            <p>Chromeで開き、右上のメニューから「ホーム画面に追加」または「アプリをインストール」を選びます。表示されない場合は「ブックマーク」を利用してください。</p>
+          </details>
+          <details>
+            <summary>Windows・Chromebook</summary>
+            <p>ChromeまたはEdgeで開き、アドレスバーのインストールアイコン、またはブラウザメニューの「アプリをインストール」「ショートカットを作成」を選びます。項目がない場合はブックマークへ保存してください。</p>
+          </details>
+          <details>
+            <summary>Mac</summary>
+            <p>Safariでは共有メニューや「ファイル」メニューの「Dockに追加」を利用できます。Chromeではアドレスバーのインストールアイコン、ショートカット作成、またはブックマークを利用してください。</p>
+          </details>
+          <details>
+            <summary>Instagram・LINEなどのアプリ内ブラウザ</summary>
+            <p>アプリ内ブラウザのメニューから「外部ブラウザで開く」を選びます。その後、iPhone・iPadはSafari、AndroidはChromeの手順で追加してください。</p>
+          </details>
+        </div>
+        <p class="dialog-note">追加機能が表示されなくても、ブックマークやショートカットから同じページを開けます。この案内はPDF読取やブラウザ設定を変更しません。</p>
+      </div>
+      <div class="dialog-actions">
+        <button class="primary" value="cancel">閉じる</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="privacyDialog" class="privacy-dialog" aria-labelledby="privacyDialogTitle">
+    <form method="dialog">
+      <div class="dialog-head">
+        <h2 id="privacyDialogTitle">プライバシー</h2>
+        <button class="icon-button" value="cancel" aria-label="閉じる" title="閉じる">×</button>
+      </div>
+      <div class="privacy-dialog-content">
+        <dl class="privacy-facts" aria-label="プライバシーの要点">
+          <div>
+            <dt>成績表PDF</dt>
+            <dd>端末内だけで処理</dd>
+          </div>
+          <div>
+            <dt>成績データ</dt>
+            <dd>自動送信・保存なし</dd>
+          </div>
+          <div>
+            <dt>広告・追跡</dt>
+            <dd>使用なし</dd>
+          </div>
+        </dl>
+        <p class="privacy-updated">最終更新：2026年7月20日</p>
+        <section>
+          <h3>処理する情報と目的</h3>
+          <p>利用者が自分で選んだ学業成績表PDFから、氏名、学籍番号、所属、入学年度、科目名、成績、単位数などを読み取り、卒業要件・GPA・履修目安をこの画面に表示するためだけに使います。PDFの選択は任意ですが、選択しない場合は判定できません。</p>
+        </section>
+        <section>
+          <h3>成績情報は外部へ送りません</h3>
+          <p>PDFはブラウザの一時メモリ上で専用処理し、判定も端末内で完結します。PDF本体と、そこから読み取った氏名、学籍番号、科目、成績、単位、判定結果を、本サービスのサーバー、Cloudflare、生成AI、クラウドOCRその他の外部サービスへ自動送信しません。</p>
+        </section>
+        <section>
+          <h3>成績データを保存しません</h3>
+          <p>成績情報を、本サービスのサーバー、データベース、Cookie、ブラウザのローカルストレージ・セッションストレージ・IndexedDBへ保存しません。ページの動作中だけ一時メモリに保持します。再読み込みまたはタブを閉じることで破棄できますが、ブラウザがページ自体を一時的に保持している間はメモリに残る場合があります。</p>
+          <p>画面のプログラム、アイコン、判定ルールなどの公開ファイルはブラウザに一時保存される場合がありますが、選択したPDFや成績データは含まれません。旧版のキャッシュとService Workerは起動時に削除・解除します。</p>
+        </section>
+        <section>
+          <h3>サイト表示に必要な通信</h3>
+          <p>画面のプログラム、年度別ルール、PDF読取機能、アイコンを、このサイトと同じ配信元から取得します。この通信にPDFや成績データは含まれません。</p>
+          <p>本サイトはGitHub Pagesで配信しています。配信サービスの情報の取扱いについては、<a href="https://docs.github.com/ja/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">GitHubのプライバシー声明</a>をご確認ください。</p>
+        </section>
+        <section>
+          <h3>端末機能・アクセス解析</h3>
+          <p>ファイル選択で利用者が指定したPDFだけにアクセスします。カメラ、マイク、位置情報、連絡先、通知、クリップボードの読み取りは使用しません。匿名報告文をコピーするときに限り、利用者の操作でクリップボードへ書き込みます。</p>
+          <p>iPhoneやアプリ内ブラウザ向けの案内に、ブラウザ・端末の種類とホーム画面から開いているかどうかを端末内で参照します。この情報は保存・送信しません。本サービスのアプリはCookieを設定せず、アクセス解析、広告、トラッキングピクセル、SNSの埋め込み機能を使用しません。</p>
+        </section>
+        <section>
+          <h3>判定ミスを報告する場合</h3>
+          <p>診断情報または報告文は送信前に全文を確認できます。匿名の診断ID、アプリ・ルールの版、学部・学科等、入学年度、問題の種類、PDF処理の段階・所要時間・エラーコード、iOS系・Instagram内ブラウザかどうかを含む場合があります。PDF本体、氏名、学籍番号、科目名、成績、単位数は含めません。</p>
+          <p>本サービスが報告を自動送信することはありません。利用者が「報告文をコピー」を押し、Instagramなどへ移動して、自分で貼り付けて送信した場合に限り外部へ送られます。送信先サービスでは、そのサービスのプライバシーポリシーが適用されます。</p>
+        </section>
+        <section>
+          <h3>外部リンク</h3>
+          <p>Instagram、大学の公式資料、うりぼーポータルなどには、利用者がリンクを押したときだけ移動します。SNSの投稿やボタンをこの画面へ埋め込んでいないため、閲覧しただけでInstagramへ情報を送ることはありません。移動後は各サイトのプライバシーポリシーをご確認ください。</p>
+        </section>
+        <section>
+          <h3>自動判定と限界</h3>
+          <p><strong>非公式サービスです。</strong> 成績表の内容と公開済みのルールから卒業要件等を自動計算しますが、利用者を継続的に追跡・評価するプロファイリングは行いません。判定に法的・公式な効力はなく、履修や卒業を決定するものではありません。最終確認は学生便覧・教務情報・<a href="https://www.uriboportal.ofc.kobe-u.ac.jp/" target="_blank" rel="noopener noreferrer">うりぼーポータル</a>で行ってください。</p>
+        </section>
+        <section>
+          <h3>適用範囲・変更・問い合わせ</h3>
+          <p>この案内は履修サポート内での取扱いに適用され、リンク先の外部サイトには適用されません。情報の取扱いを変更する場合は、この画面の内容と最終更新日を更新します。</p>
+          <p>本サービス側には、開示・訂正・削除の対象となる成績データは残りません。取扱いに関する質問は、個人情報や成績表を添付せず、運営窓口の<a href="https://www.instagram.com/uri_support/" target="_blank" rel="noopener noreferrer">Instagram</a>へお送りください。外部サービスへ移動した後の情報は、各サービスの方針に従って扱われます。</p>
+        </section>
+      </div>
+      <div class="dialog-actions">
+        <button class="primary" value="cancel">閉じる</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="issueReportDialog" class="issue-report-dialog" aria-labelledby="issueReportDialogTitle">
+    <form method="dialog">
+      <div class="dialog-head">
+        <h2 id="issueReportDialogTitle">判定ミスを報告</h2>
+        <button class="icon-button" value="cancel" aria-label="閉じる" title="閉じる">×</button>
+      </div>
+      <p>成績表や個人情報は送らないでください。匿名の報告文をコピーし、Instagramのメッセージへ貼り付けてください。</p>
+      <label>問題の種類
+        <select id="issueType">
+          <option value="科目区分">科目区分</option>
+          <option value="単位集計">単位集計</option>
+          <option value="卒業要件">卒業要件</option>
+          <option value="教職・資格">教職・資格</option>
+          <option value="画面表示">画面表示</option>
+        </select>
+      </label>
+      <textarea id="issueReportDialogPreview" class="issue-report-preview" readonly aria-label="匿名の報告文"></textarea>
+      <p id="issueReportDialogStatus" class="muted">報告文を確認してからコピーしてください。</p>
+      <div class="dialog-actions">
+        <button class="ghost" value="cancel">キャンセル</button>
+        <button id="confirmIssueReportButton" class="primary" value="default" type="button">報告文をコピー</button>
+        <button id="openInstagramProfileButton" class="ghost" value="default" type="button">Instagramプロフィールを開く</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./app.js?v=start-links-blue-underlined-ui-20260720"></script>
+</body>
+</html>
